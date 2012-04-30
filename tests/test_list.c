@@ -1,5 +1,11 @@
 #include "../lib/list.h"
 #include <stdio.h>
+#include <time.h>
+#include <unistd.h>
+
+#ifndef PROFILE_ITERATIONS
+#define PROFILE_ITERATIONS 50000
+#endif
 
 int _assert_ok(char *func){
     printf("%s: OK\n", func);
@@ -105,14 +111,12 @@ void dump_elem_int(void *elem){
     }
 }
 
-int main(int argc, char **argv){
-    int count = 0;
+int test_library_calls(void){
     int tmp = 0;
+    int count = 0;
     t_node *head = NULL;
     t_node *node = NULL;
-    
-    setbuf(stdout, NULL); /* Removes any buffering when using printf. */
-    puts("--------liblist tests start--------\n");
+
     count += assert_list_length(head, 0);
     /* Start add and new_node functions */
     /* Test add_elem with a NULL head */
@@ -203,7 +207,87 @@ int main(int argc, char **argv){
     count += assert_equal_node(node_at(head, 2), node);
     count += assert_equal_node(node_at(head, 20), node);
     empty_list(&head);
+
+    return count;
+}
+
+void profile_add_elem(void){
+    time_t start;
+    time_t end;
+    double diff;
+    int i;
+    t_node *head = NULL;
+
+    start = time(NULL);
+    for (i = 0; i < PROFILE_ITERATIONS; i++)
+        add_elem(&i, &head);
+    end = time(NULL);
+    diff = difftime(end, start);
+    printf("add_elem: %0.9f seconds, %0.9f seconds/iteration\n", diff, 
+            diff/PROFILE_ITERATIONS);
+    empty_list(&head);
+}
+
+void profile_add_node(void){
+    time_t start;
+    time_t end;
+    double diff;
+    int i;
+    t_node *head = NULL;
+    t_node *node = NULL;
+
+    start = time(NULL);
+    for (i = 0; i < PROFILE_ITERATIONS; i++) {
+        node = new_node(&i, NULL);
+        add_node(node, &head);
+    }
+    end = time(NULL);
+    diff = difftime(end, start);
+    printf("add_node: %0.9f seconds, %0.9f seconds/iteration\n", diff, 
+            diff/PROFILE_ITERATIONS);
+    empty_list(&head);
+}
+
+void profile_add_node_at(void){
+    time_t start;
+    time_t end;
+    double diff;
+    int i;
+    t_node *head = NULL;
+    t_node *node = NULL;
+
+    start = time(NULL);
+    for (i = 0; i < PROFILE_ITERATIONS; i++) {
+        node = new_node(&i, NULL);
+        add_node_at(node, &head, i % (PROFILE_ITERATIONS >> 4));
+    }
+    end = time(NULL);
+    diff = difftime(end, start);
+    printf("add_node: %0.9f seconds, %0.9f seconds/iteration\n", diff, 
+            diff/PROFILE_ITERATIONS);
+    empty_list(&head);
+}
+
+int main(int argc, char **argv){
+    int count = 0;
+    time_t start;
+    time_t end;
+    double diff;
+    
+    setbuf(stdout, NULL); /* Removes any buffering when using printf. */
+    puts("--------liblist tests start--------\n");
+    start = time(NULL);
+    count += test_library_calls();
     puts("\n---------liblist tests end---------");
+    puts("------liblist profiling start------\n");
+    printf("%d iterations in each test.\n", PROFILE_ITERATIONS);
+    profile_add_elem();
+    profile_add_node();
+    profile_add_node_at();
+    puts("\n-------liblist profiling end-------");
+    end = time(NULL);
+    diff = difftime(end, start);
+    printf("Time taken: %fs\n", diff);
     printf("ERRORS: %d\n\n", count);
 
     return count;
