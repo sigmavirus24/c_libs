@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 #ifndef PROFILE_ITERATIONS
-#define PROFILE_ITERATIONS 500000
+#define PROFILE_ITERATIONS 50000
 #endif
 
 int _assert_ok(char *func){
@@ -211,15 +211,15 @@ int test_library_calls(void){
     return count;
 }
 
-void _profile_info(char *func, double seconds, double sec_per_iter){
-    printf("%13s: %14.9f seconds, %14.9f seconds/iteration\n", func, seconds,
-            sec_per_iter);
+void _profile_info(char *func, time_t start, time_t end){
+    double diff = difftime(end, start);
+    printf("%13s: %14.9f seconds, %14.9f seconds/iteration\n", func, diff,
+            diff/PROFILE_ITERATIONS);
 }
 
 void profile_add_elem(void){
     time_t start;
     time_t end;
-    double diff;
     int i;
     t_node *head = NULL;
 
@@ -227,15 +227,14 @@ void profile_add_elem(void){
     for (i = 0; i < PROFILE_ITERATIONS; i++)
         add_elem(&i, &head);
     end = time(NULL);
-    diff = difftime(end, start);
-    _profile_info("add_elem", diff, diff/PROFILE_ITERATIONS);
+
+    _profile_info("add_elem", start, end);
     empty_list(&head);
 }
 
 void profile_add_node(void){
     time_t start;
     time_t end;
-    double diff;
     int i;
     t_node *head = NULL;
     t_node *node = NULL;
@@ -246,15 +245,14 @@ void profile_add_node(void){
         add_node(node, &head);
     }
     end = time(NULL);
-    diff = difftime(end, start);
-    _profile_info("add_node", diff, diff/PROFILE_ITERATIONS);
+
+    _profile_info("add_node", start, end);
     empty_list(&head);
 }
 
 void profile_add_node_at(void){
     time_t start;
     time_t end;
-    double diff;
     int i;
     t_node *head = NULL;
     t_node *node = NULL;
@@ -270,18 +268,23 @@ void profile_add_node_at(void){
         add_node_at(node, &head, i);
     }
     end = time(NULL);
-    diff = difftime(end, start);
-    _profile_info("add_node_at", diff, diff/PROFILE_ITERATIONS);
+
+    _profile_info("add_node_at", start, end);
     empty_list(&head);
 }
 
 void profile_append(void){
     time_t start;
     time_t end;
-    double diff;
     int i;
     t_node *head = NULL;
     t_node *node = NULL;
+
+    /* Build a long list first */
+    for (i = 0; i < PROFILE_ITERATIONS; i++) {
+        node = new_node(&i, NULL);
+        add_node(node, &head);
+    }
 
     start = time(NULL);
     for (i = 0; i < PROFILE_ITERATIONS; i++) {
@@ -289,15 +292,14 @@ void profile_append(void){
         append(node, &head);
     }
     end = time(NULL);
-    diff = difftime(end, start);
-    _profile_info("append", diff, diff/PROFILE_ITERATIONS);
+
+    _profile_info("append", start, end);
     empty_list(&head);
 }
 
 void profile_elem_at(void){
     time_t start;
     time_t end;
-    double diff;
     int i;
     t_node *head = NULL;
     t_node *node = NULL;
@@ -313,9 +315,44 @@ void profile_elem_at(void){
         (void)elem_at(head, i);
     }
     end = time(NULL);
-    diff = difftime(end, start);
-    _profile_info("elem_at", diff, diff/PROFILE_ITERATIONS);
+
+    _profile_info("elem_at", start, end);
     empty_list(&head);
+}
+
+void profile_empty_list(void){
+    time_t start;
+    time_t end;
+    int i;
+    t_node *head = NULL;
+    t_node *node = NULL;
+
+    for (i = 0; i < PROFILE_ITERATIONS; i++) {
+        node = new_node(&i, NULL);
+        append(node, &head);
+    }
+
+    start = time(NULL);
+    empty_list(&head);
+    end = time(NULL);
+
+    _profile_info("empty_list", start, end);
+}
+
+void profile_new_node(void){
+    time_t start;
+    time_t end;
+    int i;
+    t_node *node = NULL;
+
+    start = time(NULL);
+    for (i = 0; i < PROFILE_ITERATIONS; i++) {
+        node = new_node(&i, NULL);
+        free(node);
+    }
+    end = time(NULL);
+
+    _profile_info("new_node", start, end);
 }
 
 int main(int argc, char **argv){
@@ -336,6 +373,8 @@ int main(int argc, char **argv){
     profile_add_node_at();
     profile_append();
     profile_elem_at();
+    profile_empty_list();
+    profile_new_node();
     puts("\n-------liblist profiling end-------");
     end = time(NULL);
     diff = difftime(end, start);
