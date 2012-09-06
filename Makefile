@@ -17,6 +17,9 @@ all:
 tests:
 	$(MAKE) tests/
 
+travis: all
+	./run_tests.sh
+
 libs:
 	for i in $(LIBDIRS) ; do \
 		$(MAKE) $$i ; \
