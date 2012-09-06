@@ -1,0 +1,6 @@
+language: c
+install: make
+script: run_tests.sh
+compiler:
+  - clang
+  - gcc
