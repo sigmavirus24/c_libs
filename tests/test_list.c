@@ -1,37 +1,5 @@
 #include "../lib/list.h"
-#include <stdio.h>
-#include <time.h>
-#include <unistd.h>
-
-#ifndef PROFILE_ITERATIONS
-#define PROFILE_ITERATIONS 50000
-#endif
-
-int _assert_ok(char *func){
-    printf("%s: OK\n", func);
-    return 0;
-}
-
-int _assert_pointer_mismatch(char *func, void *expected, void *found){
-    printf("%s: expected: %p, found: %p\n", func, expected, found);
-    return 1;
-}
-
-int _assert_pointer_match(char *func, void *expected, void *found){
-    printf("%s: expected different pointers, found %p == %p.\n", func, 
-            expected, found);
-    return 1;
-}
-
-int _assert_int_mismatch(char *func, int expected, int found){
-    printf("%s: expected: %d, found: %d\n", func, expected, found);
-    return 1;
-}
-
-int _assert_null_found(char *func){
-    printf("%s: NULL elem found.\n", func);
-    return 1;
-}
+#include "unittest.h"
 
 int assert_list_length(t_node *list, int length){
     int count = count_nodes(list);
@@ -41,39 +9,6 @@ int assert_list_length(t_node *list, int length){
         return _assert_ok(func);
     else
         return _assert_int_mismatch(func, length, count);
-}
-
-int assert_equal_int(void *elem, int expected){
-    int *e;
-    char func[] = "assert_equal_int";
-
-    if (elem) {
-        e = (int *)elem;
-        if (expected == *e)
-            return _assert_ok(func);
-        else
-            return _assert_int_mismatch(func, expected, *e);
-    } else {
-        return _assert_null_found(func);
-    }
-}
-
-int assert_null(void *p){
-    char func[] = "assert_null";
-
-    if (!p)
-        return _assert_ok(func);
-    else
-        return _assert_pointer_mismatch(func, NULL, p);
-}
-
-int assert_not_null(void *p){
-    char func[] = "assert_not_null";
-
-    if (p)
-        return _assert_ok(func);
-    else
-        return _assert_null_found(func);
 }
 
 int assert_equal_node(t_node *found, t_node *expected){
@@ -91,7 +26,7 @@ int assert_equal_node(t_node *found, t_node *expected){
 
 int assert_not_equal_node(t_node *found, t_node *expected){
     char func[] = "assert_not_equal_node";
-    
+
     if (found && expected) {
         if (found != expected)
             return _assert_ok(func);
@@ -360,7 +295,7 @@ int main(int argc, char **argv){
     time_t start;
     time_t end;
     double diff;
-    
+
     setbuf(stdout, NULL); /* Removes any buffering when using printf. */
     puts("--------liblist tests start--------\n");
     start = time(NULL);

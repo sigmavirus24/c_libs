@@ -2,6 +2,8 @@ Q := @
 PWD := $(shell pwd)
 MAKE := make -C
 MAKECLEAN := make clean
+MAKEVERB := make verbose
+RUNTESTS := /bin/bash run_tests.sh
 CD := cd
 
 LIBDIRS := list
@@ -14,11 +16,14 @@ all:
 		$(MAKE) $$i ; \
 	done
 
-tests:
-	$(MAKE) tests/
-
 travis: all
-	./run_tests.sh
+	$(RUNTESTS)
+
+verbose: libs
+	$(CD) $(PWD)/tests && $(MAKEVERB)
+
+test: verbose
+	$(RUNTESTS)
 
 libs:
 	for i in $(LIBDIRS) ; do \
