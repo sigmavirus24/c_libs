@@ -1,6 +1,5 @@
 language: c
-install: make
-script: run_tests.sh
+script: make travis
 compiler:
   - clang
   - gcc
