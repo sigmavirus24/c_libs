@@ -6,7 +6,7 @@ MAKEVERB := make verbose
 RUNTESTS := /bin/bash run_tests.sh
 CD := cd
 
-LIBDIRS := list
+LIBDIRS := list string_search
 DIRS := $(LIBDIRS) tests
 
 default := all

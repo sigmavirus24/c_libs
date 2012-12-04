@@ -82,4 +82,16 @@ int assert_not_null(void *p){
         return _assert_null_found(func);
 }
 
+int assert_equal_ints(int received, int expected){
+    char func[] = "assert_equal_ints";
+
+    if (received == expected)
+        return _assert_ok(func);
+    else {
+        FAIL(printf("%s: Expected %d but received %d.\n", func, expected,
+                    received);)
+        return 1;
+    }
+}
+
 #endif /* __MY_UNITTEST_H__ */

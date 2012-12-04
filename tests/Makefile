@@ -8,15 +8,23 @@ LIST_SRC := test_list.c
 LIST_OBJ := $(LIST_SRC:%c=%o)
 LIST_FLAGS := $(CFLAGS) -llist
 
-# everything
-SRC :=  $(LIST_SRC)
-OBJ := $(LIST_OBJ)
+# libstrsearch specifics
+SEARCH_SRC := test_string_search.c
+SEARCH_OBJ := $(STRING_SRC:%c=%o)
+SEARCH_FLAGS := $(CFLAGS) -lstrsearch
 
-default := test_list
+# everything
+OBJ := $(LIST_OBJ) $(SEARCH_OBJ)
+
+default := test_list test_search
 
 test_list: $(LIST_OBJ)
 	@echo " [BUILD] $@"
-	$(Q)$(CC) $(OBJ) $(LIST_FLAGS) -o $@
+	$(Q)$(CC) $(LIST_OBJ) $(LIST_FLAGS) -o $@
+
+test_search: $(SEARCH_OBJ)
+	@echo " [BUILD] $@"
+	$(Q)$(CC) $(SEARCH_OBJ) $(SEARCH_FLAGS) -o $@
 
 verbose: verbose_list
 

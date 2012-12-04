@@ -9,4 +9,6 @@ binary_node *new_node(void *value, binary_node *left, binary_node *right){
         node->l_child = left;
         node->r_child = right;
     }
+
+    return node;
 }
