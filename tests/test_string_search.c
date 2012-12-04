@@ -1,23 +1,63 @@
-#include "../lib/string_search.h"
+#include "../lib/strsearch.h"
 #include "unittest.h"
 
-int test_not_in_string(void){
-    char find[] = "Not in string";
-    char text_to_search[] = "I didn't know you had a cousin Penelope, Bill!";
-    /* Above text courtesy of fortune */
+char text_to_search[47] = "I didn't know you had a cousin Penelope, Bill!";
+/* Above text courtesy of fortune */
+
+/* find_string tests */
+int test_string_not_in_string(void){
+    char find[14] = "Not in string";
 
     return assert_equal_ints(find_string(text_to_search, find), -1);
+}
+
+int test_string_in_string(void){
+    char find[7] = "didn't";
+
+    return assert_equal_ints(find_string(text_to_search, find), 2);
+}
+
+int test_equal_strings(void){
+    return assert_equal_ints(find_string(text_to_search, text_to_search), 0);
+}
+
+int test_string_at_beginning_of_string(void){
+    char find[9] = "I didn't";
+
+    return assert_equal_ints(find_string(text_to_search, find), 0);
+}
+
+/* find_char tests */
+int test_char_not_in_string(void){
+    return assert_equal_ints(find_char(text_to_search, 'z'), -1);
+}
+
+int test_char_in_string(void){
+    return assert_equal_ints(find_char(text_to_search, 'a'), 19);
+}
+
+int test_char_at_beginning_of_string(void){
+    return assert_equal_ints(find_char(text_to_search, 'I'), 0);
 }
 
 int test_library_calls(void){
     int count = 0;
 
-    count += test_not_in_string();
+    /* find_string tests */
+    count += test_string_not_in_string();
+    count += test_string_in_string();
+    count += test_equal_strings();
+    count += test_string_at_beginning_of_string();
+
+    /* find_char tests */
+    count += test_char_not_in_string();
+    count += test_char_in_string();
+    count += test_char_at_beginning_of_string();
 
     return count;
 }
 
-int main(int argc, char **argv){
+int main(void){
     int count = 0;
     time_t start;
     time_t end;

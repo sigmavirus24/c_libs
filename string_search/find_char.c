@@ -1,4 +1,4 @@
-#include "../lib/string_search.h"
+#include "../lib/strsearch.h"
 
 int find_char(char *str, char c){
     int i = -1;

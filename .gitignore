@@ -1,5 +1,5 @@
 *.o
 *.a
 *.swp
-tests/test_list
-tests/verbose_list
+tests/test_*
+tests/verbose_*
