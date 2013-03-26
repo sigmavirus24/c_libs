@@ -21,5 +21,6 @@ void remove_last(t_node **);
 void remove_node(t_node **);
 void remove_node_at(t_node **, int);
 void traverse_list(t_node *, void (*fn)(void *));
+t_node *iter_list(t_node **);
 
 #endif

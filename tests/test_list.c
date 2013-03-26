@@ -37,6 +37,19 @@ int assert_not_equal_node(t_node *found, t_node *expected){
     }
 }
 
+int assert_iter_list_iterates(t_node *head){
+    char func[] = "assert_iter_list_iterates";
+    t_node *t, *iter;
+
+    for (t = head; t; t = t->next){
+        iter = iter_list(&head);
+        if (t != iter)
+            return _assert_pointer_mismatch(func, t, iter);
+    }
+
+    return _assert_ok(func);
+}
+
 void dump_elem_int(void *elem){
     int *e;
 
@@ -45,6 +58,8 @@ void dump_elem_int(void *elem){
         printf("%d\n", *e);
     }
 }
+
+
 
 int test_library_calls(void){
     int tmp = 0;
@@ -141,8 +156,12 @@ int test_library_calls(void){
     count += assert_list_length(head, 3);
     count += assert_equal_node(node_at(head, 2), node);
     count += assert_equal_node(node_at(head, 20), node);
-    empty_list(&head);
+    /* Test iter_list */
+    node = new_node(&tmp, NULL);
+    add_node_at(new_node(&tmp, NULL), &head, 100);
+    count += assert_iter_list_iterates(head);
 
+    empty_list(&head);
     return count;
 }
 
