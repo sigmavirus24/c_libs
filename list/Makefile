@@ -9,7 +9,7 @@ TARGET := liblist
 SRC := add_elem.c add_node.c add_node_at.c append.c \
 	count_nodes.c elem_at.c empty_list.c new_node.c \
 	node_at.c remove_node.c remove_node_at.c remove_last.c \
-	traverse_list.c iter_list.c
+	traverse_list.c iter_list.c filter_list.c
 OBJ := $(SRC:%c=%o)
 
 default := liblist
